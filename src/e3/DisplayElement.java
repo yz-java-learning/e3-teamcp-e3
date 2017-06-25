@@ -1,5 +1,6 @@
 package e3;
 
 public interface DisplayElement {
-	   // display method declaration goes here
-	}
+
+	public void display(double q);
+}
