@@ -16,6 +16,7 @@ public class SalesOrder implements Observer, DisplayElement {
 	
 	public void update(double availQty, double ordQty) {
 		// Still need to do something with availQty
+		((Inventory)inventory).availableQuantity = availQty;
 		this.quantity = ordQty;
 		display(ordQty);
 		
