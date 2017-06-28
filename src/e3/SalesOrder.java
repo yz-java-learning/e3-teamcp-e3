@@ -2,7 +2,7 @@ package e3;
 
 public class SalesOrder implements Observer, DisplayElement {
 
-	private int orderSequence;
+	private int orderSequence; // Isn't this supposed to be static?
 	protected int ID;
 	protected Customer customer;
 	protected double quantity;
@@ -12,12 +12,15 @@ public class SalesOrder implements Observer, DisplayElement {
 		this.customer = customer;
 		this.quantity = quantity;
 		this.inventory = inventory;
+		
+		this.ship(((Inventory)inventory).availableQuantity);
+		// To ship and register each observer
 	}
 	
 	public void update(double availQty, double ordQty) {
 		// Still need to do something with availQty
-		((Inventory)inventory).availableQuantity = availQty;
-		this.quantity = ordQty;
+		// ((Inventory)inventory).availableQuantity = availQty; 
+		ship(availQty);
 		display(ordQty);
 		
 	}
@@ -29,7 +32,13 @@ public class SalesOrder implements Observer, DisplayElement {
 	
 	private boolean ship(double availableQuantity) {
 		// immediately ships, if there exists a back order on a product
-		return true;
+		 if (this.quantity <= availableQuantity){
+			 ((Inventory)inventory).availableQuantity -= this.quantity;
+			 System.out.println(this.toString());
+			 return true;
+		 }
+		 ((Inventory)inventory).registerObserver(this);
+		 return false;
 	}
 	
 	public String toString() {
