@@ -8,14 +8,17 @@ public class Inventory implements Observable {
 	protected List<Observer> observers;
 	protected Product product;
 	protected double availableQuantity;
-	protected double backrderedQuantity;
+	protected double backorderedQuantity;
 	
 	public Inventory(Product product) {
 		this.product = product;
 	}
 	
 	protected void updateQuantities(double stock, double backord) {
-		
+		//Quantities have been updated so we notify all observers
+		availableQuantity = stock;
+		backorderedQuantity = backord;
+		notifyObserver();
 	}
 	
 	public void registerObserver(Observer o) {
@@ -27,7 +30,23 @@ public class Inventory implements Observable {
 	}
 	
 	public void notifyObserver() {
-		
+		observers.forEach((observer) -> {
+			//Check if observer is instance of SalesOrder
+		if (observer.getClass().equals(SalesOrder.class)) {
+			SalesOrder requestSales = (SalesOrder) observer;
+			//Check if current inventory is sufficent to satisfy SalesOrder
+			if (this.availableQuantity >= requestSales.quantity) {
+				requestSales.update(availableQuantity, backorderedQuantity);
+			 }
+			//Check if observer is instance of ProductionOrder
+		} else if (observer.getClass().equals(ProductionOrder.class)) {
+			ProductionOrder requestProd = (ProductionOrder) observer;
+			//Check if inventory backorder is larger than the minimum quantity
+			if (this.backorderedQuantity >= requestProd.minQuantity) {
+				requestProd.update(availableQuantity, backorderedQuantity);
+				 }
+			}
+		});
 	}
 	
 	public String toString() {

@@ -13,16 +13,17 @@ public class SalesOrder implements Observer, DisplayElement {
 		this.quantity = quantity;
 		this.inventory = inventory;
 		
-		this.ship(((Inventory)inventory).availableQuantity);
 		// To ship and register each observer
+		this.ship(((Inventory)inventory).availableQuantity);
 	}
 	
 	public void update(double availQty, double ordQty) {
 		// Still need to do something with availQty
 		// ((Inventory)inventory).availableQuantity = availQty; 
+		Inventory stock = (Inventory) inventory;
 		ship(availQty);
+		stock.removeObserver(this);
 		display(ordQty);
-		
 	}
 	
 	public void display(double displayQuantity) {
@@ -32,12 +33,19 @@ public class SalesOrder implements Observer, DisplayElement {
 	
 	private boolean ship(double availableQuantity) {
 		// immediately ships, if there exists a back order on a product
-		 if (this.quantity <= availableQuantity){
-			 ((Inventory)inventory).availableQuantity -= this.quantity;
-			 System.out.println(this.toString());
-			 return true;
-		 }
-		 ((Inventory)inventory).registerObserver(this);
+		Inventory stock = (Inventory) inventory;
+		//Check if SalesOrder quantity is less than current inventory
+		if (this.quantity <= availableQuantity){
+			//Update inventory quantities
+			stock.availableQuantity -= this.quantity;
+			stock.backorderedQuantity -= this.quantity;
+			stock.updateQuantities(stock.availableQuantity,stock.backorderedQuantity);
+			System.out.println(this.toString());
+			return true;
+		}
+		 //Register as Observer as SalesOrder quantity is greater than current inventory
+		 stock.registerObserver(this);
+		 stock.backorderedQuantity += this.quantity;
 		 return false;
 	}
 	
