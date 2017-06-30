@@ -10,10 +10,11 @@ public class ProductionOrder implements Observer, DisplayElement {
     public ProductionOrder(int minQty, Observable inventory) {
         this.minQuantity = minQty;
         this.inventory = inventory;
-
-        // auto increment by one each time we make a ProductionOrder
-        ID = ++orderSequence;
-
+        
+        // Auto increment by one each time we make a ProductionOrder
+        ID = orderSequence++;
+        
+        // Register the observer for the current inventory
         Inventory currentInventory = (Inventory) this.inventory;
         currentInventory.registerObserver(this);
     }
@@ -26,18 +27,19 @@ public class ProductionOrder implements Observer, DisplayElement {
      * @param ordQty   Order quantity we make
      */
     public void update(double availQty, double ordQty) {
-        if (ordQty >= this.minQuantity) {
-            Inventory currentInventory = (Inventory) this.inventory;
-            currentInventory.updateQuantities(ordQty, 0);
-        }
+    	Inventory currentInventory = (Inventory) this.inventory;
+        currentInventory.updateQuantities(ordQty, 0);
+        display(ordQty);
     }
 
     public void display(double dispQty) {
-        System.out.println("Quantity: " + dispQty);
+    	System.out.println("Production Order# " + "" + ID + " to " + "" + 
+				   		   "item: " + "" + ((Inventory)inventory).product + " " + 
+				   		   "Quantity: " + "" + dispQty);
     }
 
     public String toString() {
-        return ("Minimum Quantity: " + this.minQuantity + ", " +
-                "Inventory: " + this.inventory);
-    }
+		Inventory inv = (Inventory) this.inventory;
+		return ("[" + ID + " " + inv.product + " " + minQuantity + "]");
+	}
 }
