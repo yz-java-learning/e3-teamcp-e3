@@ -2,7 +2,7 @@ package e3;
 
 public class SalesOrder implements Observer, DisplayElement {
 
-	private int orderSequence; // Isn't this supposed to be static?
+	private static int orderSequence; // Isn't this supposed to be static?
 	protected int ID;
 	protected Customer customer;
 	protected double quantity;
@@ -12,6 +12,9 @@ public class SalesOrder implements Observer, DisplayElement {
 		this.customer = customer;
 		this.quantity = quantity;
 		this.inventory = inventory;
+		
+		// Auto increment by one each time we make a SalesOrder
+		ID = orderSequence++;
 		
 		// To ship and register each observer
 		this.ship(((Inventory)inventory).availableQuantity);
@@ -27,31 +30,30 @@ public class SalesOrder implements Observer, DisplayElement {
 	}
 	
 	public void display(double displayQuantity) {
-		displayQuantity = this.quantity;
-		System.out.println("Quantity: " + displayQuantity);
+		System.out.println("Shipping Order# " + "" + ID + " to " + "" + customer + " " + 
+				   "Product: " + "" + ((Inventory)inventory).product + " " + 
+				   "Quantity: " + "" + displayQuantity);
 	}
 	
 	private boolean ship(double availableQuantity) {
 		// immediately ships, if there exists a back order on a product
 		Inventory stock = (Inventory) inventory;
-		//Check if SalesOrder quantity is less than current inventory
+		// Check if SalesOrder quantity is less than current inventory
 		if (this.quantity <= availableQuantity){
-			//Update inventory quantities
-			stock.backorderedQuantity -= this.quantity;
+			// Update inventory quantities
+			// stock.backorderedQuantity -= this.quantity;
 			stock.availableQuantity -= this.quantity;
 			stock.updateQuantities(stock.availableQuantity,stock.backorderedQuantity);
-			System.out.println(this.toString());
+			display(availableQuantity);
 			return true;
 		}
-		 //Register as Observer as SalesOrder quantity is greater than current inventory
+		 // Register as Observer as SalesOrder quantity is greater than current inventory
 		 stock.registerObserver(this);
 		 stock.backorderedQuantity += this.quantity;
 		 return false;
 	}
 	
 	public String toString() {
-		return ("Customer ID: " + this.customer + ", " + 
-				"Quantity: " + this.quantity + ", " + 
-				"Inventory: " + this.inventory);
+		return ("" + ID + "");
 	}
 }
