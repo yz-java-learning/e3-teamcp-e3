@@ -37,8 +37,8 @@ public class SalesOrder implements Observer, DisplayElement {
 		//Check if SalesOrder quantity is less than current inventory
 		if (this.quantity <= availableQuantity){
 			//Update inventory quantities
-			stock.availableQuantity -= this.quantity;
 			stock.backorderedQuantity -= this.quantity;
+			stock.availableQuantity -= this.quantity;
 			stock.updateQuantities(stock.availableQuantity,stock.backorderedQuantity);
 			System.out.println(this.toString());
 			return true;
