@@ -13,7 +13,10 @@ public class ProductionOrder implements Observer, DisplayElement {
 	}
 	
 	public void update(double availQty, double ordQty) {
-		
+		if(ordQty >= this.minQuantity){
+			Inventory inventory = (Inventory) this.inventory;
+			inventory.updateQuantities(ordQty, 0);
+		}
 	}
 	
 	public void display(double dispQty) {
