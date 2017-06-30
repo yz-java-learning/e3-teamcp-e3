@@ -12,10 +12,11 @@ public class Inventory implements Observable {
 	
 	public Inventory(Product product) {
 		this.product = product;
+		observers = new ArrayList<Observer>();
 	}
 	
 	protected void updateQuantities(double stock, double backord) {
-		//Quantities have been updated so we notify all observers
+		// Quantities have been updated so we notify all observers
 		availableQuantity = stock;
 		backorderedQuantity = backord;
 		notifyObserver();
@@ -31,18 +32,20 @@ public class Inventory implements Observable {
 	
 	public void notifyObserver() {
 		observers.forEach((observer) -> {
-			//Check if observer is instance of SalesOrder
+			// Check if observer is instance of SalesOrder
 		if (observer.getClass().equals(SalesOrder.class)) {
 			SalesOrder requestSales = (SalesOrder) observer;
-			//Check if current inventory is sufficent to satisfy SalesOrder
+			
+			// Check if current inventory is sufficient to satisfy SalesOrder
 			if (this.availableQuantity >= requestSales.quantity) {
 				requestSales.update(availableQuantity, backorderedQuantity);
 			 }
-			//Check if observer is instance of ProductionOrder
+			// Check if observer is instance of ProductionOrder
 		} else if (observer.getClass().equals(ProductionOrder.class)) {
 			ProductionOrder requestProd = (ProductionOrder) observer;
-			//Check if inventory backorder is larger than the minimum quantity
-			if (this.backorderedQuantity >= requestProd.minQuantity) {
+			
+			// Check if inventory backorder is larger than the minimum quantity
+			if (this.backorderedQuantity > requestProd.minQuantity) {
 				requestProd.update(availableQuantity, backorderedQuantity);
 				 }
 			}
@@ -50,6 +53,12 @@ public class Inventory implements Observable {
 	}
 	
 	public String toString() {
-		return "";
-	}
+		String stringOutput = "";
+        for (Observer o : observers){
+        	if (o.getClass().equals(ProductionOrder.class)){
+        		stringOutput += (((product.ID + " " + product + " " + availableQuantity + " " + backorderedQuantity)));
+        	}
+        }
+        return (stringOutput);
+    }
 }
