@@ -28,8 +28,8 @@ public class ProductionOrder implements Observer, DisplayElement {
      */
     public void update(double availQty, double ordQty) {
     	Inventory currentInventory = (Inventory) this.inventory;
-        currentInventory.updateQuantities(ordQty, 0);
-        display(ordQty);
+        currentInventory.updateQuantities(ordQty - availQty, 0.0);
+        display(ordQty - availQty);
     }
 
     public void display(double dispQty) {
