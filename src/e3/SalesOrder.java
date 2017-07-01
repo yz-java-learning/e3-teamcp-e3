@@ -27,12 +27,13 @@ public class SalesOrder implements Observer, DisplayElement {
 		ship(availQty);
 		stock.removeObserver(this);
 		display(ordQty);
+		System.out.println(this.toString());
 	}
 	
 	public void display(double displayQuantity) {
 		System.out.println("Shipping Order# " + "" + ID + " to " + "" + customer + " " + 
-				   "Product: " + "" + ((Inventory)inventory).product + " " + 
-				   "Quantity: " + "" + displayQuantity);
+						   "Product: " + "" + ((Inventory)inventory).product + " " + 
+						   "Quantity: " + "" + displayQuantity);
 	}
 	
 	private boolean ship(double availableQuantity) {
